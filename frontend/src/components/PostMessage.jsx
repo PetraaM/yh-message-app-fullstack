@@ -1,14 +1,19 @@
-import { useState } from "react"
-import { BASE_URL } from "../api"
+import { useState } from "react";
+import { BASE_URL } from "../api";
 
-export const PostMessage = ({ newMessage, fetchPosts, user, onUnauthorized }) => {
-  const [newPost, setNewPost] = useState("")
-  const [errorMessage, setErrorMessage] = useState("")
-  const [submitting, setSubmitting] = useState(false)
+export const PostMessage = ({
+  newMessage,
+  fetchPosts,
+  user,
+  onUnauthorized,
+}) => {
+  const [newPost, setNewPost] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleFormSubmit = async (event) => {
-    event.preventDefault()
-    setSubmitting(true)
+    event.preventDefault();
+    setSubmitting(true);
 
     try {
       const res = await fetch(`${BASE_URL}/messages`, {
@@ -18,38 +23,38 @@ export const PostMessage = ({ newMessage, fetchPosts, user, onUnauthorized }) =>
           Authorization: `Bearer ${user?.response?.accessToken}`,
         },
         body: JSON.stringify({ message: newPost }),
-      })
+      });
 
-      console.log("Token being sent:", user?.response?.accessToken)
+      console.log("Token being sent:", user?.response?.accessToken);
 
       if (res.status === 401) {
-        onUnauthorized()
-        setSubmitting(false)
-        return
+        onUnauthorized();
+        setSubmitting(false);
+        return;
       }
 
-      const data = await res.json()
+      const data = await res.json();
 
-      if (data.message && !data._id) {
-        console.log(data)
-        setErrorMessage(data.message)
-        setSubmitting(false)
-        return
+      if (!res.ok) {
+        console.log(data);
+        setErrorMessage(data.error || data.message || "Something went wrong");
+        setSubmitting(false);
+        return;
       }
 
-      newMessage(data)
-      setNewPost("")
-      setErrorMessage("")
-      setSubmitting(false)
-      await fetchPosts()
+      newMessage(data);
+      setNewPost("");
+      setErrorMessage("");
+      setSubmitting(false);
+      await fetchPosts();
     } catch (error) {
-      console.error(error)
-      setSubmitting(false)
+      console.error(error);
+      setSubmitting(false);
     }
-  }
+  };
 
   if (!user) {
-    return <p id="login-prompt">Log in to write a message</p>
+    return <p id="login-prompt">Log in to write a message</p>;
   }
 
   return (
@@ -62,11 +67,13 @@ export const PostMessage = ({ newMessage, fetchPosts, user, onUnauthorized }) =>
           placeholder="Write your message here..."
           value={newPost}
           onChange={(e) => {
-            setNewPost(e.target.value)
-            setErrorMessage("")
+            setNewPost(e.target.value);
+            setErrorMessage("");
           }}
         />
-        <p className="error" id="post-error">{errorMessage}</p>
+        <p className="error" id="post-error">
+          {errorMessage}
+        </p>
         <button
           type="submit"
           id="submit-post-btn"
@@ -79,5 +86,5 @@ export const PostMessage = ({ newMessage, fetchPosts, user, onUnauthorized }) =>
         </button>
       </form>
     </div>
-  )
-}
+  );
+};

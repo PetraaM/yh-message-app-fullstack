@@ -1,12 +1,17 @@
-import { useState } from "react"
-import { BASE_URL } from "../api"
+import { useState } from "react";
+import { BASE_URL } from "../api";
 
-export const SingleMessage = ({ message, user, onUnauthorized, fetchPosts }) => {
-  const [isEditing, setIsEditing] = useState(false)
-  const [editedText, setEditedText] = useState(message.message)
-  const [editError, setEditError] = useState("")
+export const SingleMessage = ({
+  message,
+  user,
+  onUnauthorized,
+  fetchPosts,
+}) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedText, setEditedText] = useState(message.message);
+  const [editError, setEditError] = useState("");
 
-  const isOwner = user && user.response.id === message.user?._id
+  const isOwner = user && user.response.id === message.user?._id;
 
   const onDelete = async () => {
     try {
@@ -15,18 +20,28 @@ export const SingleMessage = ({ message, user, onUnauthorized, fetchPosts }) => 
         headers: {
           Authorization: `Bearer ${user?.response?.accessToken}`,
         },
-      })
+      });
 
       if (res.status === 401) {
-        onUnauthorized()
-        return
+        onUnauthorized();
+        return;
       }
 
-      await fetchPosts()
+      if (res.status === 403) {
+        alert("🤠 Whoa there cowboy! You can only delete your own messages.");
+        return;
+      }
+
+      if (!res.ok) {
+        alert("Something went wrong when deleting the message.");
+        return;
+      }
+
+      await fetchPosts();
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   const onSave = async () => {
     try {
@@ -37,28 +52,28 @@ export const SingleMessage = ({ message, user, onUnauthorized, fetchPosts }) => 
           Authorization: `Bearer ${user?.response?.accessToken}`,
         },
         body: JSON.stringify({ editedMessage: editedText }),
-      })
+      });
 
       if (res.status === 401) {
-        onUnauthorized()
-        return
+        onUnauthorized();
+        return;
       }
 
-      const data = await res.json()
+      const data = await res.json();
 
       if (data.error) {
-        console.log(data)
-        setEditError(data.error)
-        return
+        console.log(data);
+        setEditError(data.error);
+        return;
       }
 
-      setIsEditing(false)
-      setEditError("")
-      await fetchPosts()
+      setIsEditing(false);
+      setEditError("");
+      await fetchPosts();
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   return (
     <div className="message" data-id={message._id}>
@@ -73,8 +88,8 @@ export const SingleMessage = ({ message, user, onUnauthorized, fetchPosts }) => 
                 rows="3"
                 value={editedText}
                 onChange={(event) => {
-                  setEditedText(event.target.value)
-                  setEditError("")
+                  setEditedText(event.target.value);
+                  setEditError("");
                 }}
               />
               <p className="error edit-error">{editError}</p>
@@ -83,14 +98,24 @@ export const SingleMessage = ({ message, user, onUnauthorized, fetchPosts }) => 
         )}
 
         <div className="message-actions">
-          <button type="button" className="delete-btn" onClick={onDelete}>🗑️</button>
+          <button type="button" className="delete-btn" onClick={onDelete}>
+            🗑️
+          </button>
 
           {isOwner && !isEditing && (
-            <button type="button" className="edit-btn" onClick={() => setIsEditing(true)}>✏️</button>
+            <button
+              type="button"
+              className="edit-btn"
+              onClick={() => setIsEditing(true)}
+            >
+              ✏️
+            </button>
           )}
 
           {isOwner && isEditing && (
-            <button type="button" className="save-btn" onClick={onSave}>💾</button>
+            <button type="button" className="save-btn" onClick={onSave}>
+              💾
+            </button>
           )}
 
           {isOwner && isEditing && (
@@ -98,8 +123,8 @@ export const SingleMessage = ({ message, user, onUnauthorized, fetchPosts }) => 
               type="button"
               className="cancel-btn"
               onClick={() => {
-                setIsEditing(false)
-                setEditError("")
+                setIsEditing(false);
+                setEditError("");
               }}
             >
               ❌
@@ -112,5 +137,5 @@ export const SingleMessage = ({ message, user, onUnauthorized, fetchPosts }) => 
         <div className="info-user">{message.user?.username || ""}</div>
       </div>
     </div>
-  )
-}
+  );
+};
