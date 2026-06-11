@@ -20,6 +20,4 @@ The manual review helped me identify issues related to authorization, input vali
 
 ## Conclusion
 
-git
-
 I think this project demonstrated the value of integrating security throughout the entire SDLC process. Security is not a single activity performed only at the end of development process. It begins with planning and threat modelling, continues through implementation and testing and is strengthened through both manual review and automated analysis. The combination of these approaches provides more complete assessment of the application's security than either of these methods could have provided on its own.
