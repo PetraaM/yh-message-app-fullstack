@@ -14,9 +14,10 @@ Phase 2. included identifying issues in the code like broken access control, wea
 
 In phase 3. I used automated tools to discover vulnerabilities that I missed in my manual code review. Dependabot discovered vulnerabilities in third party dependencies. CodeQL identified missing rate limiting and permissive CORS configuration. Here it became clear there are other security weaknesses related to app configuration and design that I had not previously considered during my manual review.
 At the same time, the automated tools did not identify some of the issues that I found myself during phase 2, such as broken access control, weak password policy and insufficient input validation. This showed me that manual review and automated tools focus on different aspects of security and in that way complement each other.
+One reason for this difference is that automated tools analyze code patterns, dependencies and configuration but they do not fully understand the application's intended behaviour or business logic. To be able to find issues such as broken access control requires understanding of users interaction within the app and which actions they should or should not be allowed to perform.
 
 The most important lesson I learned from this project is that neither approach is sufficient on its own because they have different strengths.
-The manual review helped me identify issues related to authorization, input validation, and application logic. Automated tools were more effective at identifying vulnerable dependencies, insecure configurations and patterns that I overlooked in phase 1.
+The manual review helped me identify issues related to authorization, input validation, and application logic. Automated tools were more effective at identifying vulnerable dependencies, insecure configurations and patterns that I overlooked in phase 1. Different security review methods found different categories of problems. No single tool found everything. That's why secure development uses multiple approaches.
 
 ## Conclusion
 
